@@ -1,26 +1,28 @@
 .greetings {
-  padding-left: 16px;
+  padding-left: 12px;
 }
 
 .floated {
   width: 96%;
   border: 1px solid;
-  border-radius: 5px;
-  padding: 12px;
+  border-radius: 15px;
+  margin: 5px;
+  padding-left: 8px;
 }
 
 .float-opener {
   list-style: none;
   width: 96%;
   margin: 0 auto;
+  padding: 10px;
 }
 
 .float-opener li {
-  margin: 10px 0;
+  margin-top: 10px;
 }
 
 .float-opener section {
-  border-radius: 5px;
+  border-radius: 15px;
   border: 1px solid #fff;
 }
 

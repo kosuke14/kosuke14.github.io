@@ -1,70 +1,55 @@
-<html>
-<head>
-<script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
-<style>
-@charset "utf-8";
-.wrapper{
-  overflow: hidden;
-}
-.fadeUp{
-animation-name:fadeUpEasing;
-animation-duration:0.5s;
-animation-fill-mode:forwards;
-opacity:0;
-}
-@keyframes fadeUpEasing{
-  from {
-    opacity: 0;
-  transform: translateY(100px);
-  }
-
-  to {
-    opacity: 1;
-  transform: translateY(0);
-  }
-}
-.fadeUpTrigger{
-    opacity: 0;
-}
-  body {
-    background-color: #333;
-  }
-  * {
-    color: #FFF;
-  }
-  .commons {
-    text-align: center;
-  }
-</style>
-<script>
-    function fadeEasing(){
-$('.fadeUpTrigger').each(function(){
-  var elemPos = $(this).offset().top-50;
-  var scroll = $(window).scrollTop();
-  var windowHeight = $(window).height();
-  if (scroll >= elemPos - windowHeight){
-  $(this).addClass('fadeUp');
-  }else{
-  $(this).removeClass('fadeUp');
-  }
-  });
-}
-
-$(window).scroll(function (){
-  fadeEasing();
-});
-
-$(window).on('load', function(){
-  fadeEasing();
-});
-</script>
-</head>
-<body>
-  <a href="/">スケールの遊び場 (EN: Sukru's Playground)</a>
-  <br/><br/><br/>
-  <div class="commons">
-    <h1 class="fadeUpTrigger commons">Coming Soon...</h1>
-    <p class="fadeUpTrigger commons">This website has not done yet.</p>
-  </div>
-</body>
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sukru's Playground</title>
+    <link href="https://fonts.googleapis.com/css2?family=BIZ+UDGothic&family=Noto+Sans+JP&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="index.css">
+  </head>
+  <body>
+    <div class="top">
+      <a class="title" href="/">スケールの遊び場<a style="font-size: 12px;">&nbsp;Sukru's Playground</a></a>
+    </div>
+    <div class="container">
+      <h1 class="greetings">ハロー、<br>クールな世界👋。<br>それと、スケール📏</h1>
+      <div class="floated">
+        <h3>ていうかお前、誰なん？<br>&nbsp;Self Introduction</h3>
+        <p>どこにでもいる馬とか鹿です。<br>I am totally stupid guy.</p>
+        <p>プログラミングとかしてますが、ニワカーなので見るだけみて帰ってください。<br>Coding is my hobbies but I just dabble at it. Watching animes are better, probably.</p>
+      </div>
+      <ul class="float-opener">
+        <li>
+          <section>
+            <h3 class="float-title">話せる言語 Speaking Abilities</h3>
+            <div class="float-box">
+              <p>日本語(語彙力皆無)、英語(単語力皆無)</p>
+              <p>Japanese (main), English (both are bad lol)</p>
+            </div>
+          </section>
+        </li>
+        <li>
+          <section>
+            <h3 class="float-title">できるプログラミング言語 Coding Abilities</h3>
+            <div class="float-box">
+              <p>JavaScript (Node.js), Lua、他だと強いて言えばHTMLかな</p>
+            </div>
+          </section>
+        </li>
+        <li>
+          <section>
+            <h3 class="float-title">貢献しているプロジェクト My Contributions</h3>
+            <div class="float-box">
+              <p>んなもんねえよ</p>
+              <p>Nothing lol</p>
+            </div>
+          </section>
+        </li>
+      </ul>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <script src="index.js"></script>
+  </body>
 </html>

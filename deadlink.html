@@ -35,11 +35,11 @@
         <h1 id="dead-heading">リンク切れ（リダイレクト） — Dead link redirect</h1>
         <p class="greetings">アクセスされた元のドメインが利用できない可能性があります。自動的にホームへ戻ります（カウントダウン、クリックで即戻る）。</p>
 
-        <div id="refererArea" class="referer" aria-live="polite">参照元情報を確認しています…</div>
+        <div id="refererArea" class="referer" aria-live="polite">参照元情報を確認しています… checking ref...</div>
 
         <div class="actions" aria-hidden="false">
-          <a id="homeBtn" class="btn" href="/">ホームへ戻る</a>
-          <a id="openReferer" class="btn ghost" href="#" target="_blank" rel="noopener">元のリンクを新しいタブで開く</a>
+          <a id="homeBtn" class="btn" href="/">ホームへ戻る - HOME</a>
+          <a id="openReferer" class="btn ghost" href="#" target="_blank" rel="noopener">元のリンクを新しいタブで開く - OPEN OLD LINK</a>
         </div>
 
         <div class="countdown" id="countdown" role="status" aria-live="polite">5</div>
@@ -88,14 +88,6 @@
     // クリックで即戻る
     document.getElementById("homeBtn").addEventListener("click", () => {});
     countdownEl.addEventListener("click", () => { window.location.href = "/"; });
-
-    // ちょっとしたテキストアニメ
-    let dots = 0;
-    setInterval(() => {
-      dots = (dots + 1) % 4;
-      const base = ref ? `ドメインに到達できない可能性があります(reach error)` : `参照元がありません(no ref)`;
-      countdownEl.textContent = `${count > 0 ? count + ' 秒でホームへ戻ります left seconds to go my home page — ' : ''}${base}${'.'.repeat(dots)}`;
-    }, 900);
   </script>
 </body>
 </html>

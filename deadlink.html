@@ -1,90 +1,101 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <title>REDIRECTED FROM DEAD LINK</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <title>リンク切れ — DEAD LINK REDIRECT</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <!-- 既存のスタイルを利用 -->
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="/index.css" />
+  <meta name="theme-color" content="#0b7285" />
   <style>
-    body {
-      background: #f8fafc;
-      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-      color: #232323;
-      margin: 0;
-      padding: 0;
-      text-align: center;
-    }
-    .container {
-      max-width: 480px;
-      margin: 80px auto 0 auto;
-      padding: 32px;
-      box-shadow: 0 2px 16px rgba(0,0,0,0.07);
-      background: #fff;
-      border-radius: 10px;
-    }
-    h1 {
-      font-size: 1.5em;
-      color: #e40000;
-    }
-    .referer-info {
-      font-size: 0.98em;
-      margin: 20px 0 12px 0;
-      color: #555;
-    }
-    .fade-text {
-      color: #888;
-      font-size: 1.1em;
-      animation: fadeText 2s infinite alternate;
-    }
-    @keyframes fadeText {
-      0% { opacity: 1; }
-      100% { opacity: 0.5; }
-    }
-    .redirect-link {
-      display: inline-block;
-      margin-top: 30px;
-      padding: 10px 32px;
-      color: #fff;
-      background: #0088cc;
-      border: none;
-      border-radius: 5px;
-      text-decoration: none;
-      font-size: 1.1em;
-      transition: background 0.2s;
-    }
-    .redirect-link:hover {
-      background: #005f87;
+    /* 最小の上書き: コンテンツの可読性向上 */
+    .floated { margin: 18px auto; max-width: 920px; padding: 22px; background: rgba(255,255,255,0.03); }
+    .dead-hero { color: #fff; }
+    .dead-hero h1 { margin: 0 0 8px; font-size: 1.4rem; }
+    .referer { margin-top:12px; color: #dbeafe; background: rgba(0,0,0,0.12); padding:12px; border-radius:10px; word-break:break-all; }
+    .actions { margin-top:14px; display:flex; gap:10px; flex-wrap:wrap; }
+    .btn { padding:8px 12px; border-radius:10px; text-decoration:none; color:#001e1f; background:#aaf; font-weight:700; }
+    .btn.ghost { background:transparent; color:#aaf; border:1px solid rgba(170, 187, 255, 0.16); }
+    .countdown { font-weight:700; margin-top:12px; color:#fff; }
+    @media (max-width:640px){
+      .floated { padding:14px; margin:12px; }
+      .dead-hero h1 { font-size:1.15rem; }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>私のリンク切れ間近のサイトからリダイレクトされました。 - Redirected from my almost dead link which could be no longer accessible.</h1>
-    <div class="referer-info" id="refererArea">
-      <!-- Referer情報を表示 -->
-    </div>
-    <div class="fade-text" id="deadText">
-      The domain could no longer be accesible. - あなたが見ようとしたこのドメインは消滅しかけています。
-    </div>
-    <a href="/" class="redirect-link">ホームページへ戻る</a>
-  </div>
+  <header class="top" role="banner">
+    <a class="title" href="/">スケールの遊び場</a>
+  </header>
+
+  <main class="container" role="main">
+    <article class="floated" role="article" aria-labelledby="dead-heading">
+      <div class="dead-hero">
+        <h1 id="dead-heading">リンク切れ（リダイレクト） — Dead link redirect</h1>
+        <p class="greetings">アクセスされた元のドメインが利用できない可能性があります。自動的にホームへ戻ります（カウントダウン、クリックで即戻る）。</p>
+
+        <div id="refererArea" class="referer" aria-live="polite">参照元情報を確認しています…</div>
+
+        <div class="actions" aria-hidden="false">
+          <a id="homeBtn" class="btn" href="/">ホームへ戻る</a>
+          <a id="openReferer" class="btn ghost" href="#" target="_blank" rel="noopener">元のリンクを新しいタブで開く</a>
+        </div>
+
+        <div class="countdown" id="countdown" role="status" aria-live="polite">5</div>
+      </div>
+    </article>
+  </main>
+
+  <footer class="bottom" role="contentinfo">
+    © kosuke14 • <span id="year"></span>
+  </footer>
+
   <script>
-    // Referer表示
-    const ref = document.referrer;
-    if(ref) {
-      document.getElementById("refererArea").innerText =
-        `あなたは「${ref}」からアクセスしました。 - old domain you tried to access: "${ref}"`;
+    // 参照元表示 / ボタン設定
+    const ref = document.referrer || "";
+    const refererArea = document.getElementById("refererArea");
+    const openReferer = document.getElementById("openReferer");
+    const countdownEl = document.getElementById("countdown");
+    const yearEl = document.getElementById("year");
+    yearEl.textContent = new Date().getFullYear();
+
+    if (ref) {
+      refererArea.textContent = `あなたは「${ref}」からリダイレクトされました。 You've redirected from "${ref}".`;
+      openReferer.href = ref;
+      openReferer.style.opacity = "1";
+      openReferer.style.pointerEvents = "auto";
+    } else {
+      refererArea.textContent = "参照元情報は見つかりません。直接このページにアクセスした可能性があります。 - no ref found";
+      openReferer.href = "#";
+      openReferer.style.opacity = "0.6";
+      openReferer.style.pointerEvents = "none";
     }
-    // ドメイン消滅メッセージをインパクト強く
-    function animateDeadText() {
-      const textEl = document.getElementById("deadText");
-      let dots = 0;
-      setInterval(() => {
-        dots = (dots + 1) % 4;
-        textEl.innerText =
-          `The domain could no longer be accesible. - あなたが見ようとしたこのドメインは消滅しかけています${'.'.repeat(dots)}`;
-      }, 1000);
-    }
-    animateDeadText();
+
+    // カウントダウン（30秒） → ホームへ
+    let count = 30;
+    countdownEl.textContent = `${count} 秒でホームへ戻ります - ${count} seconds to go my home page`;
+    const timer = setInterval(() => {
+      count -= 1;
+      if (count > 0) {
+        countdownEl.textContent = `${count} 秒でホームへ戻ります - ${count} seconds to go my home page`;
+      } else {
+        clearInterval(timer);
+        window.location.href = "/";
+      }
+    }, 1000);
+
+    // クリックで即戻る
+    document.getElementById("homeBtn").addEventListener("click", () => {});
+    countdownEl.addEventListener("click", () => { window.location.href = "/"; });
+
+    // ちょっとしたテキストアニメ
+    let dots = 0;
+    setInterval(() => {
+      dots = (dots + 1) % 4;
+      const base = ref ? `ドメインに到達できない可能性があります(reach error)` : `参照元がありません(no ref)`;
+      countdownEl.textContent = `${count > 0 ? count + ' 秒でホームへ戻ります left seconds to go my home page — ' : ''}${base}${'.'.repeat(dots)}`;
+    }, 900);
   </script>
 </body>
 </html>

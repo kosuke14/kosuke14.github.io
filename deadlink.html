@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>REDIRECTED FROM DEAD LINK</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      background: #f8fafc;
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      color: #232323;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+    .container {
+      max-width: 480px;
+      margin: 80px auto 0 auto;
+      padding: 32px;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+      background: #fff;
+      border-radius: 10px;
+    }
+    h1 {
+      font-size: 1.5em;
+      color: #e40000;
+    }
+    .referer-info {
+      font-size: 0.98em;
+      margin: 20px 0 12px 0;
+      color: #555;
+    }
+    .fade-text {
+      color: #888;
+      font-size: 1.1em;
+      animation: fadeText 2s infinite alternate;
+    }
+    @keyframes fadeText {
+      0% { opacity: 1; }
+      100% { opacity: 0.5; }
+    }
+    .redirect-link {
+      display: inline-block;
+      margin-top: 30px;
+      padding: 10px 32px;
+      color: #fff;
+      background: #0088cc;
+      border: none;
+      border-radius: 5px;
+      text-decoration: none;
+      font-size: 1.1em;
+      transition: background 0.2s;
+    }
+    .redirect-link:hover {
+      background: #005f87;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>私のリンク切れ間近のサイトからリダイレクトされました。 - Redirected from my almost dead link which could be no longer accessible.</h1>
+    <div class="referer-info" id="refererArea">
+      <!-- Referer情報を表示 -->
+    </div>
+    <div class="fade-text" id="deadText">
+      The domain could no longer be accesible. - あなたが見ようとしたこのドメインは消滅しかけています。
+    </div>
+    <a href="/" class="redirect-link">ホームページへ戻る</a>
+  </div>
+  <script>
+    // Referer表示
+    const ref = document.referrer;
+    if(ref) {
+      document.getElementById("refererArea").innerText =
+        `あなたは「${ref}」からアクセスしました。 - old domain you tried to access: "${ref}"`;
+    }
+    // ドメイン消滅メッセージをインパクト強く
+    function animateDeadText() {
+      const textEl = document.getElementById("deadText");
+      let dots = 0;
+      setInterval(() => {
+        dots = (dots + 1) % 4;
+        textEl.innerText =
+          `The domain could no longer be accesible. - あなたが見ようとしたこのドメインは消滅しかけています${'.'.repeat(dots)}`;
+      }, 1000);
+    }
+    animateDeadText();
+  </script>
+</body>
+</html>

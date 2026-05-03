@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>デイリーレポート生成</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap');
+
+:root {
+–bg: #0d0f14;
+–surface: #161921;
+–surface2: #1e2230;
+–border: #2a2f42;
+–accent: #5b7fff;
+–accent2: #a78bfa;
+–text: #e8eaf6;
+–text-muted: #6b7280;
+–success: #34d399;
+–error: #f87171;
+–radius: 12px;
+}
+
+- { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+background: var(–bg);
+color: var(–text);
+font-family: ‘Noto Sans JP’, sans-serif;
+min-height: 100vh;
+display: flex;
+align-items: center;
+justify-content: center;
+padding: 24px;
+background-image:
+radial-gradient(ellipse at 20% 20%, rgba(91,127,255,0.07) 0%, transparent 50%),
+radial-gradient(ellipse at 80% 80%, rgba(167,139,250,0.05) 0%, transparent 50%);
+}
+
+.container {
+width: 100%;
+max-width: 680px;
+}
+
+.header {
+margin-bottom: 32px;
+}
+
+.header h1 {
+font-size: 22px;
+font-weight: 700;
+letter-spacing: -0.5px;
+background: linear-gradient(135deg, var(–accent), var(–accent2));
+-webkit-background-clip: text;
+-webkit-text-fill-color: transparent;
+background-clip: text;
+margin-bottom: 6px;
+}
+
+.header p {
+font-size: 13px;
+color: var(–text-muted);
+font-weight: 300;
+}
+
+.card {
+background: var(–surface);
+border: 1px solid var(–border);
+border-radius: var(–radius);
+padding: 24px;
+margin-bottom: 16px;
+}
+
+.input-group {
+display: flex;
+gap: 10px;
+align-items: center;
+}
+
+.input-label {
+font-size: 12px;
+color: var(–text-muted);
+margin-bottom: 8px;
+font-weight: 500;
+letter-spacing: 0.5px;
+text-transform: uppercase;
+}
+
+input[type=“text”] {
+flex: 1;
+background: var(–surface2);
+border: 1px solid var(–border);
+border-radius: 8px;
+padding: 11px 14px;
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 14px;
+color: var(–text);
+outline: none;
+transition: border-color 0.2s;
+}
+
+input[type=“text”]:focus {
+border-color: var(–accent);
+}
+
+input[type=“text”]::placeholder {
+color: var(–text-muted);
+}
+
+button {
+cursor: pointer;
+font-family: ‘Noto Sans JP’, sans-serif;
+font-weight: 500;
+border: none;
+border-radius: 8px;
+transition: all 0.2s;
+}
+
+.btn-primary {
+background: linear-gradient(135deg, var(–accent), var(–accent2));
+color: white;
+padding: 11px 20px;
+font-size: 14px;
+white-space: nowrap;
+}
+
+.btn-primary:hover:not(:disabled) {
+opacity: 0.88;
+transform: translateY(-1px);
+}
+
+.btn-primary:disabled {
+opacity: 0.4;
+cursor: not-allowed;
+}
+
+.btn-copy {
+background: var(–surface2);
+border: 1px solid var(–border);
+color: var(–text);
+padding: 8px 16px;
+font-size: 13px;
+display: flex;
+align-items: center;
+gap: 6px;
+}
+
+.btn-copy:hover {
+border-color: var(–accent);
+color: var(–accent);
+}
+
+.btn-copy.copied {
+border-color: var(–success);
+color: var(–success);
+}
+
+.status {
+font-size: 13px;
+padding: 10px 14px;
+border-radius: 8px;
+margin-top: 12px;
+display: none;
+}
+
+.status.loading {
+display: block;
+background: rgba(91,127,255,0.1);
+border: 1px solid rgba(91,127,255,0.3);
+color: var(–accent);
+}
+
+.status.error {
+display: block;
+background: rgba(248,113,113,0.1);
+border: 1px solid rgba(248,113,113,0.3);
+color: var(–error);
+}
+
+.result-card {
+display: none;
+}
+
+.result-card.visible {
+display: block;
+}
+
+.result-header {
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-bottom: 14px;
+}
+
+.result-label {
+font-size: 12px;
+color: var(–text-muted);
+font-weight: 500;
+letter-spacing: 0.5px;
+text-transform: uppercase;
+}
+
+.code-block {
+background: var(–surface2);
+border: 1px solid var(–border);
+border-radius: 8px;
+padding: 20px;
+font-family: ‘JetBrains Mono’, monospace;
+font-size: 13.5px;
+line-height: 1.8;
+white-space: pre-wrap;
+word-break: break-word;
+color: #c9d1d9;
+}
+
+.spinner {
+display: inline-block;
+width: 12px;
+height: 12px;
+border: 2px solid rgba(91,127,255,0.3);
+border-top-color: var(–accent);
+border-radius: 50%;
+animation: spin 0.7s linear infinite;
+margin-right: 6px;
+vertical-align: middle;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.dot {
+width: 6px;
+height: 6px;
+border-radius: 50%;
+background: var(–accent);
+display: inline-block;
+margin-right: 6px;
+vertical-align: middle;
+animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+.api-note {
+font-size: 12px;
+color: var(–text-muted);
+margin-top: 10px;
+padding: 10px 12px;
+background: rgba(255,200,60,0.06);
+border: 1px solid rgba(255,200,60,0.15);
+border-radius: 8px;
+line-height: 1.6;
+}
+</style>
+
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>📓 デイリーレポート生成</h1>
+    <p>Studyplusの学習履歴から最新日のレポートを自動生成します</p>
+  </div>
+
+  <div class="card">
+    <div class="input-label">ユーザーネーム</div>
+    <div class="input-group">
+      <input type="text" id="username" placeholder="例: taro_study" />
+      <button class="btn-primary" id="fetchBtn" onclick="fetchAndGenerate()">生成</button>
+    </div>
+    <div class="status" id="status"></div>
+    <div class="api-note">
+      ⚠️ ブラウザのCORSポリシーにより、Studyplus APIへの直接アクセスができない場合があります。その場合はStudyplusからエクスポートしたJSONをご利用ください。
+    </div>
+  </div>
+
+  <div class="card result-card" id="resultCard">
+    <div class="result-header">
+      <div class="result-label">生成されたレポート</div>
+      <button class="btn-copy" id="copyBtn" onclick="copyReport()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+        コピー
+      </button>
+    </div>
+    <div class="code-block" id="reportOutput"></div>
+  </div>
+</div>
+
+<script>
+const DAYS_JA = ['日','月','火','水','木','金','土'];
+
+const SUBJECT_MAP = {
+  '英語': ['英単語','英文','英語長文','The Rules','ポラリス','ターゲット','Rules','Duolingo','英文解釈','英文法'],
+  '数学': ['数学','ゴールデンルート','GR数学','算数'],
+  '物理': ['物理'],
+  '化学': ['化学'],
+  '古文': ['古文','古典','ジャンプアップ','ステップアップ','古文単語'],
+  '現代文': ['現代文','キーワード読解','面白いほど'],
+  '公共': ['公共','倫理','政経'],
+  '地理': ['地理'],
+  '歴史': ['歴史','日本史','世界史'],
+};
+
+function classifySubject(title) {
+  for (const [subj, keywords] of Object.entries(SUBJECT_MAP)) {
+    for (const kw of keywords) {
+      if (title.includes(kw)) return subj;
+    }
+  }
+  return 'その他';
+}
+
+function formatTitle(raw) {
+  let t = raw.trim();
+  // GR数学
+  if (t.includes('ゴールデンルート') && t.includes('数学')) return 'GR数学IAIIB';
+  // 面白い系
+  const omoshiroi = t.match(/(.+?)の?(.+?)が?面白いほどできる(.+)/);
+  if (omoshiroi) {
+    const bookPart = omoshiroi[2] + '面白いドリル';
+    return bookPart;
+  }
+  // ポラリス (英文解釈/英文法 + 番号のみ)
+  const polarisMatch = t.match(/(英文解釈|英文法)ポラリス\s*([０-９0-9１２３４５６７８９]+)/);
+  if (polarisMatch) {
+    const num = polarisMatch[2].replace(/[０-９]/g, s => String.fromCharCode(s.charCodeAt(0) - 0xFEE0));
+    return `関正生の${polarisMatch[1]}ポラリス${num}`;
+  }
+  // The Rules
+  if (t.includes('The Rules') || t.includes('Ｔｈｅ　Ｒｕｌｅｓ') || t.includes('ＴｈｅＲｕｌｅｓ')) {
+    const numMatch = t.match(/[２2]\s*/);
+    const num = t.match(/[０-９0-9１２３４５６７８９]+/);
+    const n = num ? num[0].replace(/[０-９]/g, s => String.fromCharCode(s.charCodeAt(0) - 0xFEE0)) : '';
+    return `関正生のThe Rules英語長文問題集${n}`;
+  }
+  // ジャンプアップ / ステップアップ区別
+  if (t.includes('ジャンプアップ')) return 'ジャンプアップノート古典文法';
+  if (t.includes('ステップアップ')) return 'ステップアップノート古典文法';
+  // 全角→半角
+  t = t.replace(/[Ａ-Ｚａ-ｚ０-９]/g, s => String.fromCharCode(s.charCodeAt(0) - 0xFEE0));
+  t = t.replace(/　/g, ' ');
+  // 英単語ターゲット
+  t = t.replace('英単語ターゲット１９００', '英単語ターゲット1900');
+  return t;
+}
+
+function formatPages(start, end, unit) {
+  if (!unit || unit === 'コマ' || unit === 'レッスン') return null;
+  if (unit === '問') {
+    if (start === end) return `問${start}`;
+    return `問${start} - 問${end}`;
+  }
+  if (start === end) return `p.${start}`;
+  return `pp.${start} - pp.${end}`;
+}
+
+function formatDuration(totalSec) {
+  const h = Math.floor(totalSec / 3600);
+  const m = Math.floor((totalSec % 3600) / 60);
+  if (h > 0 && m > 0) return `${h}時間${m}分`;
+  if (h > 0) return `${h}時間`;
+  return `${m}分`;
+}
+
+function buildReport(records, targetDate) {
+  const filtered = records.filter(r => r.record_date === targetDate);
+  if (!filtered.length) return null;
+
+  const dateObj = new Date(targetDate);
+  const month = dateObj.getMonth() + 1;
+  const day = dateObj.getDate();
+  const dow = DAYS_JA[dateObj.getDay()];
+
+  // 科目別時間
+  const subjTime = {};
+  // 教材リスト (順序保持)
+  const materialMap = new Map(); // key: formatted title
+
+  for (const r of filtered) {
+    const subj = classifySubject(r.material_title);
+    subjTime[subj] = (subjTime[subj] || 0) + r.duration;
+
+    if (r.unit === 'コマ' || r.unit === 'レッスン') {
+      // コマ・レッスンはページなし
+      const title = r.material_title.includes('授業') ? (r.record_comment || r.material_title) : formatTitle(r.material_title);
+      const key = title;
+      if (!materialMap.has(key)) materialMap.set(key, { title, pages: null, unit: r.unit, comment: r.record_comment });
+    } else {
+      const title = formatTitle(r.material_title);
+      if (!materialMap.has(title)) {
+        materialMap.set(title, { title, start: r.start_position, end: r.end_position, unit: r.unit });
+      } else {
+        const existing = materialMap.get(title);
+        existing.start = Math.min(existing.start, r.start_position);
+        existing.end = Math.max(existing.end, r.end_position);
+      }
+    }
+  }
+
+  // 科目順序
+  const SUBJ_ORDER = ['英語','数学','物理','化学','古文','現代文','公共','地理','歴史','その他'];
+  const subjLines = SUBJ_ORDER
+    .filter(s => subjTime[s])
+    .map(s => `- ${s}　${formatDuration(subjTime[s])}`);
+
+  // 勉強内容
+  const contentLines = [];
+  for (const [, m] of materialMap) {
+    if (m.unit === 'コマ') {
+      // コマはコメントを内容として
+      const comment = m.comment ? m.comment.replace(/\n/g, '・') : '';
+      contentLines.push(`- ${m.title}${comment ? `（${comment}）` : ''}`);
+    } else if (m.unit === 'レッスン') {
+      contentLines.push(`- ${m.title}`);
+    } else {
+      const pages = formatPages(m.start, m.end, m.unit);
+      contentLines.push(`- ${m.title}${pages ? `（${pages}）` : ''}`);
+    }
+  }
+
+  return `《デイリーレポート》
+●日付：${month}月${day}日（${dow}）
+
+●勉強時間
+${subjLines.join('\n')}
+
+●勉強内容
+${contentLines.join('\n')}
+
+●振り返り、気づき`;
+}
+
+async function fetchAndGenerate() {
+  const username = document.getElementById('username').value.trim();
+  if (!username) {
+    showStatus('error', 'ユーザーネームを入力してください');
+    return;
+  }
+
+  const btn = document.getElementById('fetchBtn');
+  btn.disabled = true;
+  showStatus('loading', '<span class="spinner"></span>データを取得中...');
+  document.getElementById('resultCard').classList.remove('visible');
+
+  try {
+    const url = `https://api.studyplus.jp/2/users/${username}/records?page=1&per_page=50`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`HTTP ${res.status}: ユーザーネームが正しいか確認してください`);
+    const data = await res.json();
+    const records = data.records || [];
+    if (!records.length) throw new Error('学習記録が見つかりませんでした');
+
+    // 最新日を特定
+    const latestDate = records.map(r => r.record_date).sort().reverse()[0];
+    const report = buildReport(records, latestDate);
+    if (!report) throw new Error('レポートを生成できませんでした');
+
+    document.getElementById('reportOutput').textContent = report;
+    document.getElementById('resultCard').classList.add('visible');
+    document.getElementById('status').style.display = 'none';
+  } catch (e) {
+    showStatus('error', '⚠️ ' + e.message);
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+function showStatus(type, html) {
+  const el = document.getElementById('status');
+  el.className = 'status ' + type;
+  el.innerHTML = html;
+}
+
+function copyReport() {
+  const text = document.getElementById('reportOutput').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('copyBtn');
+    btn.classList.add('copied');
+    btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> コピー済`;
+    setTimeout(() => {
+      btn.classList.remove('copied');
+      btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg> コピー`;
+    }, 2000);
+  });
+}
+
+document.getElementById('username').addEventListener('keydown', e => {
+  if (e.key === 'Enter') fetchAndGenerate();
+});
+</script>
+
+</body>
+</html>
